@@ -19,29 +19,20 @@ export const goodsFromServer = [
 const SORT_BY_ALPHABET = 'alphabet';
 const SORT_BY_LENGTH = 'length';
 
-const getPreparedGoods = (goods, { sortField, reversed }) => {
-  const preparedGoods = [...goods];
+const sortGoods = (goods, sortField, reversed) => {
+  const sortedGoods = [...goods].sort((a, b) => {
+    if (sortField === SORT_BY_ALPHABET) {
+      return a.localeCompare(b);
+    }
 
-  if (sortField) {
-    preparedGoods.sort((good1, good2) => {
-      switch (sortField) {
-        case SORT_BY_ALPHABET:
-          return good1.localeCompare(good2);
+    if (sortField === SORT_BY_LENGTH) {
+      return a.length - b.length;
+    }
 
-        case SORT_BY_LENGTH:
-          return good1.length - good2.length;
+    return 0;
+  });
 
-        default:
-          return 0;
-      }
-    });
-  }
-
-  if (reversed) {
-    preparedGoods.reverse();
-  }
-
-  return preparedGoods;
+  return reversed ? sortedGoods.reverse() : sortedGoods;
 };
 
 export const App = () => {
@@ -53,10 +44,7 @@ export const App = () => {
     setReversed(false);
   };
 
-  const visibleGoods = getPreparedGoods(goodsFromServer, {
-    sortField,
-    reversed,
-  });
+  const visibleGoods = sortGoods(goodsFromServer, sortField, reversed);
 
   return (
     <div className="section content">
